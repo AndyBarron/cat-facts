@@ -1,0 +1,22 @@
+{
+  "name": "cat-facts",
+  "version": "1.0.0",
+  "description": "Cat Facts!!!",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "lint": "eslint index.js",
+    "format": "npm run lint -- --fix"
+  },
+  "author": "Andy Barron <AndrewLBarron@gmail.com>",
+  "license": "Unlicense",
+  "dependencies": {
+    "axios": "0.17.1",
+    "koa": "2.4.1",
+    "koa-router": "7.3.0"
+  },
+  "devDependencies": {
+    "@andybarron/eslint-config": "1.0.3",
+    "eslint": "4.14.0"
+  }
+}
