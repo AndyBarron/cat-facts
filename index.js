@@ -16,24 +16,30 @@ const getFactJson = async () => {
 };
 
 const slackHandler = async (ctx) => {
-  ctx.body = (await getFactJson()).fact;
+  const { fact } = await getFactJson();
+  ctx.body = {
+    response_type: 'in_channel', // eslint-disable-line camelcase
+    text: fact,
+  };
 };
 
 router.get('/slack', slackHandler);
 router.post('/slack', slackHandler);
 router.get('/slack/authorize', async (ctx) => {
   const { code } = ctx.query;
+  /* eslint-disable camelcase */
   const query = queryString.stringify({
     client_id: SLACK_CLIENT_ID,
     client_secret: SLACK_CLIENT_SECRET,
     code,
   });
-  const _accessToken = (await axios.post(SLACK_OAUTH_URL, query)).data.access_token;
+  /* eslint-enable camelcase */
+  await axios.post(SLACK_OAUTH_URL, query); // TODO: Save access token
   ctx.redirect('/slack/success');
 });
-router.get('/slack/success', async (ctx) => {
+router.get('/slack/success', (ctx) => {
   ctx.body = 'Welcome to CAT FACTS!';
-})
+});
 
 app
   .use(router.routes())
