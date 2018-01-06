@@ -23,6 +23,10 @@ const slackHandler = async (ctx) => {
   };
 };
 
+router.get('/health', async (ctx) => {
+  ctx.body = 'healthy';
+});
+
 router.post('/slack', slackHandler);
 router.get('/slack/authorize', async (ctx) => {
   const { code } = ctx.query;
@@ -37,7 +41,7 @@ router.get('/slack/authorize', async (ctx) => {
   ctx.redirect('/slack/success');
 });
 router.get('/slack/success', (ctx) => {
-  ctx.body = 'Welcome to CAT FACTS!';
+  ctx.body = 'Welcome to CAT FACTS!'; // TODO: Pretty landing page
 });
 
 app
