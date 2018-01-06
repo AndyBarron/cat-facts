@@ -13,7 +13,8 @@
   "dependencies": {
     "axios": "0.17.1",
     "koa": "2.4.1",
-    "koa-router": "7.3.0"
+    "koa-router": "7.3.0",
+    "strict-env": "1.0.0"
   },
   "devDependencies": {
     "@andybarron/eslint-config": "1.0.3",
