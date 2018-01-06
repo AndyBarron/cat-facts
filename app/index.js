@@ -23,7 +23,6 @@ const slackHandler = async (ctx) => {
   };
 };
 
-router.get('/slack', slackHandler);
 router.post('/slack', slackHandler);
 router.get('/slack/authorize', async (ctx) => {
   const { code } = ctx.query;
