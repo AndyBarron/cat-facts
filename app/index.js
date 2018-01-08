@@ -23,6 +23,10 @@ const slackHandler = async (ctx) => {
   };
 };
 
+router.get('/', async (ctx) => {
+  ctx.body = 'Welcome to CAT FACTS! Actual landing page coming soon...';
+});
+
 router.get('/health', async (ctx) => {
   ctx.body = 'healthy';
 });
