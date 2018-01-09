@@ -1,49 +1,57 @@
 /* eslint require-await: 0 */
 'use strict';
 const axios = require('axios');
+const fs = require('fs');
 const Koa = require('koa');
 const Router = require('koa-router');
 const queryString = require('querystring');
-const util = require('util');
-const xml2js = require('xml2js');
 const { PORT, SLACK_CLIENT_ID, SLACK_CLIENT_SECRET } = require('./config');
 
 const API_URL = 'https://catfact.ninja/fact';
-const IMAGE_XML_URL = 'https://thecatapi.com/api/images/get?format=xml';
+const IMAGE_API_JSON_URL = 'https://random.cat/meow';
 const SLACK_OAUTH_URL = 'https://slack.com/api/oauth.access';
+
+const BOGUS_FACT_PERCENT_CHANCE = 0.02; // 2% = 1 out of 50
+const BOGUS_FACTS = [
+  'Most cats have four legs, but some can have up to seven.',
+  'Cats were invented in 1973 by John Mewler.',
+  'Arguably the most famous cat is Garfield, an orange tabby sent into space by NASA on Apollo 13.',
+  'Raccoons, platypi, skunks, and otters are all just different cat breeds.',
+  'Cats are the only reptiles with fur.',
+  'Scientists believe that cats were a primary factor in the extinction of dinosaurs.',
+  'The fairy tale "Puss in Boots" is actually based on the life of Christopher Columbus.',
+  'Never feed a cat after midnight. Just trust us on this one.',
+  'If you hear a cat yowling into the night, it is probably trying to summon the Dark Lord ' +
+    'Cathulu.',
+  'Does your cat rub itself against your leg when you get home? This means that when the cat ' +
+    'uprising occurs, your cat will grant you the privilege of a swift, painless death.',
+  'Some people believe that black cats are a portent of bad luck. These people are racist.',
+  'Famous fictional cats include Tony the Tiger, Smaug, and Don Corleone.',
+  "HELP! I'm trapped in a foul feline fact factory!",
+  fs.readFileSync('data/zalgo.txt', 'utf8').trim(), // eslint-disable-line no-sync
+];
 
 const app = new Koa();
 const router = new Router();
 
 const getFactText = async () => {
-  return (await axios(API_URL)).data.fact;
-};
+  if (Math.random() < BOGUS_FACT_PERCENT_CHANCE) {
+    const index = Math.floor(Math.random() * BOGUS_FACTS.length);
+    return BOGUS_FACTS[index];
+  } else {
+    return (await axios(API_URL)).data.fact;
+  }
+}
 
-const objectFromXmlString = util.promisify(xml2js.parseString);
-
-const getImageData = async () => {
-  const result = await axios({
-    responseType: 'document',
-    url: IMAGE_XML_URL,
-  });
-  const xml = result.data;
-  const parsed = await objectFromXmlString(xml);
-  const image = parsed.response.data[0].images[0].image[0];
-  return {
-    sourceUrl: image.source_url[0],
-    url: image.url[0],
-  };
-};
+const getImageUrl = async () => (await axios(IMAGE_API_JSON_URL)).data.file;
 
 const slackHandler = async (ctx) => {
-  const [fact, imageData] = await Promise.all([getFactText(), getImageData()]);
+  const [fact, imageUrl] = await Promise.all([getFactText(), getImageUrl()]);
   /* eslint-disable camelcase */
   const attachments = [
     {
-      author_link: imageData.sourceUrl,
-      author_name: 'Meow!',
       fallback: 'Meow!',
-      image_url: imageData.url,
+      image_url: imageUrl,
     },
   ];
   ctx.body = {
@@ -59,10 +67,9 @@ router.get('/', async (ctx) => {
 });
 
 router.get('/health', async (ctx) => {
-  ctx.body = 'healthy';
+  ctx.statusCode = 200;
 });
 
-router.get('/slack', slackHandler);
 router.post('/slack', slackHandler);
 router.get('/slack/authorize', async (ctx) => {
   const { code } = ctx.query;
