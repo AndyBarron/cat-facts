@@ -67,7 +67,8 @@ router.get('/', async (ctx) => {
 });
 
 router.get('/health', async (ctx) => {
-  ctx.statusCode = 200;
+  ctx.body = '';
+  ctx.status = 200;
 });
 
 router.post('/slack', slackHandler);
