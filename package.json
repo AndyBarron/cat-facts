@@ -5,8 +5,10 @@
   "main": "app/index.js",
   "repository": "github:AndyBarron/cat-facts",
   "scripts": {
-    "start": "forever --minUptime 1000 --spinSleepTime 1000 -m Infinity .",
-    "lint": "eslint src",
+    "start": "forever --minUptime 1000 --spinSleepTime 1000 -m Infinity -c \"npm run server\" .",
+    "dev": "nodemon --watch . --ignore ./node_modules/ --ext js --exec \"npm run server\"",
+    "server": "node .",
+    "lint": "eslint .",
     "format": "npm run lint -- --fix"
   },
   "author": "Andy Barron <AndrewLBarron@gmail.com>",
@@ -16,10 +18,12 @@
     "forever": "0.15.3",
     "koa": "2.4.1",
     "koa-router": "7.3.0",
-    "strict-env": "1.0.0"
+    "strict-env": "1.0.0",
+    "xml2js": "0.4.19"
   },
   "devDependencies": {
     "@andybarron/eslint-config": "1.1.0",
-    "eslint": "4.14.0"
+    "eslint": "4.14.0",
+    "nodemon": "1.14.9"
   }
 }
