@@ -8,7 +8,7 @@ const queryString = require('querystring');
 const { PORT, SLACK_CLIENT_ID, SLACK_CLIENT_SECRET } = require('./config');
 
 const API_URL = 'https://catfact.ninja/fact';
-const IMAGE_API_JSON_URL = 'https://random.cat/meow';
+const IMAGE_API_JSON_URL = 'https://aws.random.cat/meow';
 const SLACK_OAUTH_URL = 'https://slack.com/api/oauth.access';
 
 const BOGUS_FACT_PERCENT_CHANCE = 0.02; // 2% = 1 out of 50
@@ -41,7 +41,7 @@ const getFactText = async () => {
   } else {
     return (await axios(API_URL)).data.fact;
   }
-}
+};
 
 const getImageUrl = async () => (await axios(IMAGE_API_JSON_URL)).data.file;
 
